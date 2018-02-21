@@ -1,1 +1,67 @@
 
+#define motor1F 5
+#define motor1B 6
+#define motor2F 9
+#define motor2B 10
+char val = '0';
+void setup() {
+  // put your setup code here, to run once:
+Serial.begin(9600);
+pinMode(motor1F,OUTPUT);
+pinMode(motor1B,OUTPUT);
+pinMode(motor2F,OUTPUT);
+pinMode(motor2B,OUTPUT);
+     }
+
+void loop() {
+  // put your main code here, to run repeatedly:
+ if ( Serial.available() > 0 ) { 
+val = Serial.read(); 
+if (val=='F')
+  {
+Serial.println("Forward");
+digitalWrite(motor1F,HIGH);
+digitalWrite(motor1B,LOW);
+digitalWrite(motor2F,HIGH);
+digitalWrite(motor2B,LOW);
+  }
+  
+  else if (val=='B')
+   {
+  Serial.println("Backward");
+ digitalWrite(motor1B,HIGH);
+digitalWrite(motor1F,LOW);
+digitalWrite(motor2B,HIGH);
+digitalWrite(motor2F,LOW);
+    }
+    
+     else if (val=='S')
+   {
+    Serial.println("Stop");
+ digitalWrite(motor1B,LOW);
+digitalWrite(motor1F,LOW);
+digitalWrite(motor2B,LOW);
+digitalWrite(motor2F,LOW);
+    }
+    
+    else if (val=='R')
+   {
+    Serial.println("Right");
+ digitalWrite(motor1F,HIGH);
+digitalWrite(motor1B,LOW);
+digitalWrite(motor2B,HIGH);
+digitalWrite(motor2F,LOW);
+    } 
+    
+    else if (val=='L')
+   {
+    Serial.println("Leftn");
+ digitalWrite(motor1F,LOW);
+digitalWrite(motor1B,HIGH);
+digitalWrite(motor2F,HIGH);
+digitalWrite(motor2B,LOW);
+    } 
+    
+   
+}
+            }
