@@ -7,7 +7,7 @@ int main(void)
 	UBRRH = (int8_t) (UBRR_Value>>8);
 	UCSRB = (1<<RXEN);    // configuration to receive serial data
 	UCSRC |= (3<<UCSZ0);   // configuration to receive data as 8 bits at a time (standard)
-	DDRA = 0X0F;        // using the first 4 pins of port a as outputs
+	DDRA = 0X0F;        // using the first 4 pins of port A as outputs
 	char received;     // variable to save the input data
 
     while (1) 
