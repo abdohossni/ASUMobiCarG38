@@ -1,0 +1,92 @@
+#define motorsf1 10 // included motor 1 and 2 forward motion
+  #define motorsb1 9 // included motor 1 and 2 backword motion
+  #define motorsf2 8 // included motor 3 and 4 forward motion
+  #define motorsb2 7 // included motor 3 and 4 backword motion
+  #define Enablel1 5
+  #define Enablel2 6
+     char value ; //Direction of motion
+ //int sped;  //the Speed of motion 
+void setup() {
+
+  // put your setup code here, to run once:
+  pinMode (motorsf1,OUTPUT);
+  pinMode (motorsb1,OUTPUT);
+  pinMode (motorsf2,OUTPUT);
+  pinMode (motorsb2,OUTPUT);
+  Serial.begin (9600);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+if (Serial.available()>0){
+  
+
+  value = Serial.read();
+  //sped = Serial.read();
+}
+ if (value =='1'){
+  
+  analogWrite(Enablel1,25);
+  analogWrite(Enablel2,25);
+ }
+  else  if (value=='2'){
+  analogWrite(Enablel1,40);
+  analogWrite(Enablel2,40);}
+  else if(value =='3'){
+  analogWrite(Enablel1,60);
+  analogWrite(Enablel2,60);}
+  else if (value=='4'){
+  analogWrite(Enablel1,90);
+  analogWrite(Enablel2,90);}
+  else if (value == '5'){
+  analogWrite(Enablel1,120);
+  analogWrite(Enablel2,120);}
+   else if (value == '6'){
+  analogWrite(Enablel1,150);
+  analogWrite(Enablel2,150);}
+   else if (value == '7'){
+  analogWrite(Enablel1,180);
+  analogWrite(Enablel2,180);}
+   else if (value == '9'){
+  analogWrite(Enablel1,220);
+  analogWrite(Enablel2,220);}
+   else if (value == 'q'){
+  analogWrite(Enablel1,255);
+  analogWrite(Enablel2,255);}
+   else if (value == '0'){
+digitalWrite(motorsf1,LOW);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,LOW); 
+digitalWrite(motorsb2,LOW); 
+}
+  if (value== 'F'){
+    //Serial.println(abdo);
+    digitalWrite(motorsf1,HIGH);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,HIGH); 
+digitalWrite(motorsb2,LOW); 
+    
+  }else if (value=='B'){
+    digitalWrite(motorsf1,LOW);  
+digitalWrite(motorsb1,HIGH); 
+digitalWrite(motorsf2,LOW); 
+digitalWrite(motorsb2,HIGH); 
+  }else if (value=='L'){
+    digitalWrite(motorsf1,HIGH);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,LOW); 
+digitalWrite(motorsb2,HIGH); 
+  }else if (value== 'R'){
+    digitalWrite(motorsf1,LOW);  
+digitalWrite(motorsb1,HIGH); 
+digitalWrite(motorsf2,HIGH); 
+digitalWrite(motorsb2,LOW); 
+  }
+  if (value !='R'&& value !='F' && value !='L' && value !='B'){
+    digitalWrite(motorsf1,LOW);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,LOW); 
+digitalWrite(motorsb2,LOW); 
+  }
+}
+
