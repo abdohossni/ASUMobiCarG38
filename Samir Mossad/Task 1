@@ -43,7 +43,7 @@ switch(Motion)
   case 'B': backward(VarSpeed); break;
   case 'R': right(VarSpeed); break;
   case 'L': left(VarSpeed); break;
-  default : stopAll();
+  default : stopAll(); break;
   
   
   }
