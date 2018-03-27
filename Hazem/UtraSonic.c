@@ -60,7 +60,7 @@ int main(void)
 		
 		count = ICR1 + (65535 * TimerOverflow);	/* Take count */
 		/* 16MHz Timer freq, sound speed =343 m/s */
-		distance = (double)count / (467);
+		distance = (double)count / (466.47);
 		
 		if(distance<=15){
 			// function of stop and back then turn
