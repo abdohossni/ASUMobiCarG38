@@ -9,3 +9,6 @@ RC Car project related to Control Course (2nd year Electrical Department ASU 201
 * Abdel jalil Nasser 
 * Abdelrahman shawqy 
 * Abdelrahman Hosny 
+
+
+phase 1 video : https://youtu.be/MHxfmElXrek
