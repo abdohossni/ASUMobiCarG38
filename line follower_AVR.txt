@@ -1,0 +1,35 @@
+#define F_CPU 16000000UL
+#include <avr/io.h>
+DDRB =0x00
+while (1)
+{
+// pB0 for right sensor 
+// pB1 for middle sensor 
+// pB2 for left sensor 
+
+if ((PINB &(1<<PB0)) && !(PINB &(1<<PB1)) && (PINB &(1<<PB2))){
+controlMotor(FORWARD);
+}
+if (!(PINB &(1<<PB0)) && !(PINB &(1<<PB1)) && !(PINB &(1<<PB2))){
+controlMotor(FORWARD);
+}
+if ((PINB &(1<<PB0)) && (PINB &(1<<PB1)) && (PINB &(1<<PB2))){
+controlMotor(FORWARD);
+}
+if ((PINB &(1<<PB0)) && (PINB &(1<<PB1)) && !(PINB &(1<<PB2)))
+{
+controlMotor(LEFT);
+}
+if ((PINB &(1<<PB0)) && !(PINB &(1<<PB1)) && !(PINB &(1<<PB2)))
+{
+controlMotor(LEFT);
+}
+if (!(PINB &(1<<PB0)) && (PINB &(1<<PB1)) && (PINB &(1<<PB2)))
+{
+controlMotor(RIGHT);
+}
+if (!(PINB &(1<<PB0)) && !(PINB &(1<<PB1)) && (PINB &(1<<PB2)))
+{
+controlMotor(RIGHT);
+}
+}
