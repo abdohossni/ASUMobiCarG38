@@ -1,0 +1,70 @@
+#define LS 13      // left sensor
+#define MS 12      // middle sensor 
+#define RS 11      // right sensor
+
+
+
+void setup()
+{
+  pinMode(LS, INPUT);
+  pinMode(MS, INPUT);
+  pinMode(RS, INPUT);
+
+}
+
+void loop()
+{
+  if((digitalRead(LS)) && !(digitalRead(MS)) && (digitalRead(RS)))       // Move Forward
+  {
+digitalWrite(motorsf1,HIGH);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,HIGH); 
+digitalWrite(motorsb2,LOW);
+  }
+  if(!(digitalRead(LS)) && !(digitalRead(MS)) && !(digitalRead(RS)))      // Move Forward
+  {
+digitalWrite(motorsf1,HIGH);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,HIGH); 
+digitalWrite(motorsb2,LOW);
+  } 
+  if((digitalRead(LS)) && (digitalRead(MS)) && (digitalRead(RS)))         // Move Forward
+  {
+digitalWrite(motorsf1,HIGH);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,HIGH); 
+digitalWrite(motorsb2,LOW);
+  }
+  
+  
+ if((digitalRead(LS)) && (digitalRead(MS)) && !(digitalRead(RS)))   // Turn right
+  {
+digitalWrite(motorsf1,LOW);  
+digitalWrite(motorsb1,HIGH); 
+digitalWrite(motorsf2,HIGH); 
+digitalWrite(motorsb2,LOW); 
+  }
+ if((digitalRead(LS)) && !(digitalRead(MS)) && !(digitalRead(RS)))    // Turn right
+  {
+   digitalWrite(motorsf1,LOW);  
+digitalWrite(motorsb1,HIGH); 
+digitalWrite(motorsf2,HIGH); 
+digitalWrite(motorsb2,LOW); 
+  }
+  
+  if(!(digitalRead(LS)) && (digitalRead(MS)) && (digitalRead(RS)))    // turn left
+  {
+digitalWrite(motorsf1,HIGH);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,LOW); 
+digitalWrite(motorsb2,HIGH); 
+  }
+  if(!(digitalRead(LS)) && !(digitalRead(MS)) && (digitalRead(RS)))  // turn left
+  {
+digitalWrite(motorsf1,HIGH);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,LOW); 
+digitalWrite(motorsb2,HIGH); 
+  }
+ 
+}
