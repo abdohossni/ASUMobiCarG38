@@ -1,0 +1,55 @@
+#define motorsf1 9 // included motor 1 and 2 forward motion
+#define motorsb1 10 // included motor 1 and 2 backword motion
+#define motorsf2 6 // included motor 3 and 4 forward motion
+#define motorsb2 5 // included motor 3 and 4 backword motion
+#define Enablel1 3
+#define Enablel2 11
+char value ; 
+void Forward (){
+  
+digitalWrite(motorsf1,HIGH);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,HIGH); 
+digitalWrite(motorsb2,LOW); 
+
+  }
+
+void Stop() {
+  Serial.println("STOP");
+  
+digitalWrite(motorsf1,LOW);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,LOW); 
+digitalWrite(motorsb2,LOW);
+  
+  }
+
+void Right() {
+ Serial.println("RIGHT");
+digitalWrite(motorsf1,LOW);  
+digitalWrite(motorsb1,HIGH); 
+digitalWrite(motorsf2,HIGH); 
+digitalWrite(motorsb2,LOW); 
+  
+  
+  }
+
+void Left (){
+   Serial.println("LEFT");
+
+digitalWrite(motorsf1,HIGH);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,LOW); 
+digitalWrite(motorsb2,HIGH); 
+    
+  }
+
+void Back (){
+   Serial.println("BACK");
+digitalWrite(motorsf1,LOW);  
+digitalWrite(motorsb1,HIGH); 
+digitalWrite(motorsf2,LOW); 
+digitalWrite(motorsb2,HIGH);
+  
+  
+  }
