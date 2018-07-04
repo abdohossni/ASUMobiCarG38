@@ -1,0 +1,27 @@
+void setup() {
+  // put your setup code here, to run once:
+pinMode(motor1F,OUTPUT);
+pinMode(motor1B,OUTPUT);
+pinMode(motor2F,OUTPUT);
+pinMode(motor2B,OUTPUT);
+Serial.begin(9600);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+if ( Serial.available() > 0 )
+{ 
+  val = Serial.read(); 
+   if (val=='F' || val=='f' )
+   { Forward();}
+   else if(val=='B' || val=='b')
+   {Backword();}
+   else if(val=='S' || val=='s')
+   {Stop();}
+   else if (val=='L' || val=='l')
+   {Left();}
+   else if (val=='R' || val=='r')
+   {Right();}
+}
+delay(100);
+}
