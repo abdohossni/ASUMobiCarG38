@@ -1,0 +1,391 @@
+#define LS 13      // left sensor
+#define MS 12      // middle sensor 
+#define RS 4      // right sensor
+#define motorsf1 9 // included motor 1 and 2 forward motion
+#define motorsb1 10 // included motor 1 and 2 backword motion
+#define motorsf2 5 // included motor 3 and 4 forward motion
+#define motorsb2 6 // included motor 3 and 4 backword motion
+#define Enablel1 3
+#define Enablel2 11
+#define echo 7
+#define trig 8
+float Destance()
+{
+    float duration,distance;
+    digitalWrite(trig,LOW);
+    delayMicroseconds(2);
+    
+    digitalWrite(trig,HIGH);
+    delayMicroseconds(10);
+    
+    digitalWrite(trig,LOW);
+    
+    duration = pulseIn(echo,HIGH);
+    distance= duration *(0.034/2);
+    return distance; 
+}
+float dist;
+char value ; //Direction of motion
+String data = "" ; 
+int intdata;
+
+//int sped;  //the Speed of motion 
+void Forward (){
+  
+digitalWrite(motorsf1,HIGH);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,HIGH); 
+digitalWrite(motorsb2,LOW); 
+
+  }
+
+void Stop() {
+  Serial.println("STOP");
+  
+digitalWrite(motorsf1,LOW);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,LOW); 
+digitalWrite(motorsb2,LOW);
+  
+  }
+
+void Left() {
+ Serial.println("LEFT");
+digitalWrite(motorsf1,LOW);  
+digitalWrite(motorsb1,HIGH); 
+digitalWrite(motorsf2,HIGH); 
+digitalWrite(motorsb2,LOW); 
+  
+  
+  }
+
+void Right (){
+   Serial.println("RIGHT");
+
+digitalWrite(motorsf1,HIGH);  
+digitalWrite(motorsb1,LOW); 
+digitalWrite(motorsf2,LOW); 
+digitalWrite(motorsb2,HIGH); 
+    
+  }
+
+void Back (){
+   Serial.println("BACK");
+digitalWrite(motorsf1,LOW);  
+digitalWrite(motorsb1,HIGH); 
+digitalWrite(motorsf2,LOW); 
+digitalWrite(motorsb2,HIGH);
+  
+  
+  }
+
+  void Rectangle(){
+  analogWrite(Enablel1,120);
+  analogWrite(Enablel2,120);
+  for (int i=0;i<2;i++)
+  {
+    Forward();
+  delay(400);
+  Stop();
+  delay(70);
+  
+    Forward();
+  delay(400);
+  Stop();
+  delay(70);
+  
+    Forward();
+  delay(400);
+  Stop();
+  delay(150);
+  Right();
+  delay(400);
+  Stop();
+
+    Forward();
+  delay(800);
+  Stop();
+  delay(70);
+  
+    Forward();
+  delay(800);
+  Stop();
+  delay(70);
+  
+    Forward();
+  delay(800);
+  Stop();
+  delay(150); 
+  Right();
+  delay(400);
+  Stop();
+  
+  }  
+  }
+ void Circle_R(){
+    delay(500);
+    analogWrite(Enablel1,98);
+  analogWrite(Enablel2,200);
+    
+    Forward();
+    delay(4550);
+
+   Stop();
+   
+        
+    }
+   void Circle_L(){
+    analogWrite(Enablel2,113);
+  analogWrite(Enablel1,200);
+  Forward();
+    delay(4200);
+
+   Stop();
+    
+    }
+    void Infinity(){
+      Circle_R();
+      Circle_L();
+      
+      }
+      void Circle_2M(){
+         analogWrite(Enablel1,118);
+  analogWrite(Enablel2,200);
+Forward();
+delay(7800);
+Stop();
+        }
+  
+
+void setup() {
+
+  // put your setup code here, to run once:
+  Serial.begin (9600);  
+  pinMode(LS, INPUT);
+  pinMode(MS, INPUT);
+  pinMode(RS, INPUT);
+  pinMode (motorsf1,OUTPUT);
+  pinMode (motorsb1,OUTPUT);
+  pinMode (motorsf2,OUTPUT);
+  pinMode (motorsb2,OUTPUT);
+  pinMode(Enablel1,OUTPUT);
+  pinMode(Enablel2,OUTPUT);
+  pinMode(echo,INPUT);
+pinMode(trig,OUTPUT);
+
+}
+
+
+
+
+void loop() {
+  // put your main code here, to run repeatedly:
+if (Serial.available()>0){
+  value = Serial.read();
+  Serial.println(value);
+}
+
+if (value =='W'){
+
+while (1){
+  
+  
+if (Serial.available()>0){
+  value = Serial.read();
+}
+
+Serial.println(value);
+// if (value =='1'){
+//  analogWrite(Enablel1,25);
+//  analogWrite(Enablel2,25);}
+//  else  if (value=='2'){
+//  analogWrite(Enablel1,40);
+//  analogWrite(Enablel2,40);}
+//  else if(value =='3'){
+//  analogWrite(Enablel1,60);
+//  analogWrite(Enablel2,60);}
+//  else if (value=='4'){
+//  analogWrite(Enablel1,90);
+//  analogWrite(Enablel2,90);}
+//  else if (value == '5'){
+  analogWrite(Enablel1,120);
+  analogWrite(Enablel2,120);
+//}
+//   else if (value == '6'){
+//  analogWrite(Enablel1,150);
+//  analogWrite(Enablel2,150);}
+//   else if (value == '7'){
+//  analogWrite(Enablel1,180);
+//  analogWrite(Enablel2,180);}
+//   else if (value == '9'){
+//  analogWrite(Enablel1,220);
+//  analogWrite(Enablel2,220);}
+//   else if (value == 'q'){
+//  analogWrite(Enablel1,255);
+//  analogWrite(Enablel2,255);}
+//   else if (value == '0'){
+//     Stop();
+//  }
+  if (value== 'F'){
+  // Forward
+  dist = Destance();
+Serial.println(dist);
+if (dist < 20 ){
+  Back();
+  delay(500);
+  Right();
+  delay(500);
+}
+  Forward();
+     Serial.println("Forward");
+  }else if (value=='B'){
+  //Back
+  Back();
+     Serial.println("Back");
+  }else if (value=='L'){
+  //Left
+  Left();
+     Serial.println("Left");
+  }else if (value== 'R'){
+    Serial.println("Right");
+    Right();
+    }else if (value !='R'&& value!='F' && value !='L' && value !='B' && value != 'w'){
+    //stop
+    Stop();
+   Serial.println("Stop");
+  }else if (value == 'w'){
+    Serial.println("break");
+    break;
+  }
+}
+  
+}
+  
+ 
+
+if (value ==  'V'){
+  while(1){
+
+int    L = digitalRead(LS);
+int    M = digitalRead(MS);
+int    R = digitalRead(RS);
+  Serial.print("LEFT = ");
+  Serial.print (L);
+  Serial.print("    Middel = ");
+  Serial.print (M);
+  Serial.print ("  Right = ");
+  Serial.print(R); 
+  Serial.println ("");
+   
+  analogWrite(Enablel1,100) ;
+  analogWrite(Enablel2,100);
+
+  if( !(digitalRead(LS)) && (digitalRead(MS)) && !(digitalRead(RS)) )       // Move Forward
+  {
+Serial.println("Forward") ;
+Forward ();
+/*delay(80);
+Stop(); */
+  }
+ else if((digitalRead(LS)) && (digitalRead(MS)) && (digitalRead(RS)))      // Move Forward
+  {
+Serial.println("Forward") ;
+Forward ();
+  } 
+
+  
+  
+  
+ else if(!(digitalRead(LS)) && !(digitalRead(MS)) && (digitalRead(RS)))   // Turn right
+  {
+Right();
+/*delay(80);
+Stop(); */
+Serial.println("Right") ; 
+  }
+else if(!(digitalRead(LS)) && (digitalRead(MS)) && (digitalRead(RS)))    // Turn right
+  {
+Serial.println("Right") ;
+ Right();
+/* delay(80);
+Stop();*/
+  }
+  
+ else if((digitalRead(LS)) && !(digitalRead(MS)) && !(digitalRead(RS)))    // turn left
+  { Left();
+   /*delay(80);
+Stop(); */
+Serial.println("left") ;
+  }
+ else if((digitalRead(LS)) && (digitalRead(MS)) && !(digitalRead(RS)))  // turn left
+  {
+Serial.println("left") ;
+  Left() ;
+}
+
+if (Serial.available()>0){
+  value = Serial.read();
+  //Stop();
+
+}
+if (value == 'v'){
+  Stop();
+  break;
+}
+
+  }//loop
+  }//if
+
+
+
+
+
+
+if (value == 'X'){
+    analogWrite(Enablel1,120) ;
+    analogWrite(Enablel2,120);
+  while(1){
+    
+    if(Serial.available()){
+    value = Serial.read();
+    }
+    if (isDigit(value)){
+      data = data + value;  
+     Serial.println(value);
+           delay(60);
+      }else if(value == 'x') {
+        break;
+      }else if(value == 'A'){
+      Serial.println("Angle");
+      intdata = data.toInt();
+      Right();
+      delay(intdata);
+      Stop();
+      value = "";
+      data = "";
+      //break;       
+      }else if(value == 'D'){
+      Serial.println("Distance");   
+      intdata = data.toInt();
+      Forward();
+      delay(intdata);
+      Stop();
+      value = "" ;
+      data = "";
+      //break;    
+      }
+
+      else if(value == 'S')
+      {
+         Infinity();
+         delay(25000);
+         Rectangle();
+         delay(25000);
+         Circle_2M();
+         delay(25000);
+          Stop();
+      }
+    }
+    
+  }
+
