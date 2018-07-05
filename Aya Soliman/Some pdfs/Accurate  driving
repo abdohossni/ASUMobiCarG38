@@ -1,0 +1,263 @@
+    
+ Infoheader3.pngROBOTC
+Using encoders to drive some distance
+< Tutorials‎ | Arduino Projects/Mobile Robotics/VEX
+Arduino → Arduino Tutorials and Guided Projects → VEX + Arduino, Mobile Robotics Platform → Using encoders to drive some distance
+Contents
+1 Encoders vs. Timing
+2 The Theory
+3 Programming
+3.1 Smaller units
+4 Using Functions
+Encoders vs. Timing
+Up until now you have driven some distance by doing something like this:
+
+motor[leftServo] = 50;
+motor[rightServo] = 50;
+ 
+wait1Msec(1000);
+ 
+motor[leftServo] = 0;
+motor[rightServo] = 0;
+While this works perfectly for basic tasks, you may have noticed that this method can be very inconsistent. Variables like battery power level, friction on different surfaces, and even manufacturing tolerances in the motors can severely reduce your accuracy in driving a particular distance.
+
+Thankfully, there is a better way to do this. Now that we have encoders on our wheels, we can drive forward a certain distance much more precisely. In fact, the only thing that will stop us from arriving perfectly at our destination every time is if the wheels happen to skid on the surface that is being driven on.
+
+The Theory
+We know from math class that the circumference of a circle can be defined as π * d - where π, or pi is a constant around 3.14, and d is the diameter of the circle.
+
+Since our wheels are obviously circular, we can use these rules to make our robot drive a specific distance, without any trial and error - we need only know the diameter of the wheel.
+
+We can see in the image below that when the robot moves, its wheels will rotate once for every time the robot has moved a distance equal to the circumference of the wheel.
+
+
+
+The wheels rotate once for every circumference traveled.
+Since we know that Circumference = pi * Diameter, we now know that when the wheels rotate once (that is, 360° of rotation), the distance traveled is equal to pi * the diameter of the wheel. If they rotate twice, we get twice that amount. From this, we can determine the formula:
+
+Distance traveled = Wheel rotations * circumference
+
+or...
+
+Distance traveled = (Degrees turned / 360) * circumference
+
+or...
+
+Distance traveled = (Encoder ticks / 360) * circumference
+
+which leads up to our final, useful formula:
+
+Encoder ticks = (360 / circumference) * Distance to travel
+
+The great thing is, (360 / circumference) will always be constant when we have the same robot. We can work this out beforehand and we will never have to worry about it again.
+
+Programming
+Say that we wanted our robot to drive ten inches. The first thing to do is find the diameter of the VEX wheels so that we can use that in our formula. From the VEX product page, we can see that the wheels on the Swervebot have a diameter of 2.75 inches.
+
+
+We can multiply that by pi to get the circumference:
+
+2.75 * 3.14 = 8.635 inches.
+
+Now, to find the ratio of ticks to distance, we just divide 360 by that amount (as seen in the above formula), and get:
+
+360 / 8.635 = 41.69 ticks per inch.
+
+Since the current robotC firmware for Arduino cannot handle floating-point (decimal) operations, we will take this time to round our result to 42 ticks per inch.
+
+Notepad.gif NOTE: 42 is also the answer to the ultimate question of Life, the Universe, and Everything. (Long standing joke amongst fans of "The Hitchhikers Guide to the Galaxy")
+
+Notepad.gif NOTE: ROBOTC for Arduino does support floating point and other math operations on the Mega and Mega 2560, these operations are much slower than integer math. As such, we recommend that you avoid using floating point math whenever possible.
+
+Now that we know we need 42 encoder ticks to go an inch, we can write a simple program:
+
+task main()
+{
+  sensorValue[leftEncoder] = 0; // It is good practice to reset encoder values at the start of a program.
+ 
+  //Calculate inches by multiplying the ratio we determined earlier with the amount of inches we desire.
+  //Since we don't want to calculate every iteration of the loop, we will find the clicks needed 
+  //before we begin the loop.
+  int tickGoal = 42 * 10;
+ 
+  while(SensorValue[leftEncoder] < tickGoal)
+  {
+    motor[leftServo] = 50;  // The nice thing about encoders is that we can use any power value we want, and 
+    motor[rightServo] = 50; // still get the same distance.
+  }
+  motor[leftServo] = 0; // Stop the loop once the encoders have counted up the correct number of encoder ticks.
+  motor[rightServo] = 0;  
+}
+Run it, and you will see that the robot will go almost exactly 10 inches, very consistently. Because we rounded off a decimal at a point in our calculations, the distance may not be 100% accurate, but you will notice extremely consistent results - and this is far more useful to a programmer.
+
+Also, note how we used the value of the left encoder. When the robot is going in a straight line, you can read from either encoder as they should be going at the same rate - it will not matter which one you choose.
+
+Smaller units
+What if we wanted to go, say, 10.5 inches? We know that the firmware cannot support floating-point operations, so this seems impossible at first. However, if we just change our units to be smaller (say, tenths of an inch), we can now input '105 tenths of an inch' and still use a whole number. We will keep the same ratio of 42, and divide by ten at the end of the calculation to minimize information lost in rounding.
+
+task main()
+{
+  sensorValue[leftEncoder] = 0; // It is good practice to reset encoder values at the start of a program.
+ 
+  //Calculate tenths of an inch by multiplying the ratio we determined earlier with the amount of 
+  //tenths of inches to go, then divide by ten as the ratio used is for an inch value.
+  //Since we don't want to calculate every iteration of the loop, we will find the clicks needed 
+  //before we begin the loop.
+  int tickGoal = (42 * 105) / 10;
+ 
+  while(SensorValue[leftEncoder] < tickGoal)
+  {
+    motor[leftServo] = 50;  // The nice thing about encoders is that we can use any power value we want, and 
+    motor[rightServo] = 50; // still get the same distance.
+  }
+  motor[leftServo] = 0; // Stop the loop once the encoders have counted up the correct number of encoder ticks.
+  motor[rightServo] = 0;  
+}
+Now we have driven 10.5 inches by specifying distance to the tenth of an inch.
+
+Using Functions
+We can discover the real power of this code when we integrate it into a function - we will be able to write a function that specifies a distance, and a speed, and will make the robot go that distance and speed consistently and accurately.
+
+Have a look at the definition of tickGoal in the code above:
+
+  int tickGoal = (42 * 105) / 10;
+We are multiplying our constant ratio, 42, which will not change when we use the same wheels, by the desired distance, then dividing it by a constant amount. If we wanted to go a different distance, we would change only one value, the one that here is 105. With a little alteration of the previous code, then, we can write a useful function for driving a certain distance at power 50:
+
+void driveDistance(int tenthsOfIn)
+{
+  sensorValue[leftEncoder] = 0; // It is good practice to reset encoder values at the start of a function.
+ 
+  //Calculate tenths of an inch by multiplying the ratio we determined earlier with the amount of 
+  //tenths of inches to go, then divide by ten as the ratio used is for an inch value.
+  //Since we don't want to calculate every iteration of the loop, we will find the clicks needed 
+  //before we begin the loop.
+  int tickGoal = (42 * tenthsOfIn) / 10;
+ 
+  while(SensorValue[leftEncoder] < tickGoal)
+  {
+    motor[leftServo] = 50;  // The nice thing about encoders is that we can use any power value we want, and 
+    motor[rightServo] = 50; // still get the same distance.
+  }
+  motor[leftServo] = 0; // Stop the loop once the encoders have counted up the correct number of encoder ticks.
+  motor[rightServo] = 0;  
+}
+This way, we can call this function within our main program to go any number of inches we wish.
+
+We can make this even more powerful by specifying a second parameter, separated from the first one with a comma, so that we can also specify the motor's power when we call the function:
+
+void driveDistance(int tenthsOfIn, int power)
+{
+  sensorValue[leftEncoder] = 0; // It is good practice to reset encoder values at the start of a function.
+ 
+  //Calculate tenths of an inch by multiplying the ratio we determined earlier with the amount of 
+  //tenths of inches to go, then divide by ten as the ratio used is for an inch value.
+  //Since we don't want to calculate every iteration of the loop, we will find the clicks needed 
+  //before we begin the loop.
+  int tickGoal = (42 * tenthsOfIn) / 10;
+ 
+  while(SensorValue[leftEncoder] < tickGoal)
+  {
+    motor[leftServo] = power;  // We can now set the power from the function's second parameter.
+    motor[rightServo] = power; 
+  }
+  motor[leftServo] = 0; // Stop the loop once the encoders have counted up the correct number of encoder ticks.
+  motor[rightServo] = 0;  
+}
+Now we have a very powerful function. Say you wanted to drive forwards any amount of inches at any, then - you can use one line of code in task main to do this. Now, if you want to drive backwards, it is a little different. It seems easy, as you can just set the 'power' parameter to a negative value. However, the loop tests for the value of the encoder being less than the tickGoal - so, if you wish to drive backwards by specifying a negative power, the encoders would tick backwards and give negative values, and the loop would never trigger as the encoder values would always be less than tickGoal.
+
+There is an easy fix for this, however. All you need to do is encase the encoder value in the abs() (absolute value) function, which turns negative numbers positive, and leaves positive numbers as positive. That way, the less than comparison will always change whether the encoders tick forwards or backwards.
+
+There is one small problem - because the Arduino UNO has such little memory, it was decided not to include some of the less commonly used functions in the firmware, like sin(), cos(), etc. Unfortunately for our purposes, abs() was also removed with this culling.
+
+Luckily, there is a way to add this function back into robotC for this program. Simply put this code right below the configuration code:
+
+#define abs(X) ((X < 0) ? -1 * X : X)
+Now the abs() function will work.
+
+When we add these changes to the driveDistance()function, your program should look like this:
+
+#define abs(X) ((X < 0) ? -1 * X : X)
+ 
+void driveDistance(int tenthsOfIn, int power)
+{
+  sensorValue[leftEncoder] = 0; // It is good practice to reset encoder values at the start of a function.
+ 
+  //Calculate tenths of an inch by multiplying the ratio we determined earlier with the amount of 
+  //tenths of inches to go, then divide by ten as the ratio used is for an inch value.
+  //Since we don't want to calculate every iteration of the loop, we will find the clicks needed 
+  //before we begin the loop.
+  int tickGoal = (42 * tenthsOfIn) / 10;
+ 
+  while(abs(SensorValue[leftEncoder]) < tickGoal)
+  {
+    motor[leftServo] = power;  // We can now set the power from the function's second parameter.
+    motor[rightServo] = power; 
+  }
+  motor[leftServo] = 0; // Stop the loop once the encoders have counted up the correct number of encoder ticks.
+  motor[rightServo] = 0;  
+}
+So, let's say we want to drive forward 6.2 inches, backwards 5.4 inches, forward 8.7 inches, and then back 9.5 inches, returning to the starting point. Power 50 has worked well for us, so we will keep it at that (If you wish to have more accuracy, lower the power a bit). All we need to do now is add task main(), call the functions, and you should end up with the following program:
+
+#pragma config(CircuitBoardType, typeCktBoardUNO)
+#pragma config(UART_Usage, UART0, uartSystemCommPort, baudRate200000, IOPins, dgtl1, dgtl0)
+#pragma config(Sensor, dgtl2,  rightEncoder,   sensorQuadEncoder)
+#pragma config(Sensor, dgtl7,  leftEncoder,    sensorQuadEncoder)
+#pragma config(Motor,  servo_10,        rightServo,    tmotorServoContinuousRotation, openLoop, reversed, IOPins, dgtl10, None)
+#pragma config(Motor,  motor_11,        leftServo,     tmotorServoContinuousRotation, openLoop, IOPins, dgtl11, None)
+//*!!Code automatically generated by 'ROBOTC' configuration wizard               !!*//
+ 
+#define abs(X) ((X < 0) ? -1 * X : X)
+ 
+void driveDistance(int tenthsOfIn, int power)
+{
+  SensorValue[leftEncoder] = 0; // It is good practice to reset encoder values at the start of a function.
+ 
+  //Calculate tenths of an inch by multiplying the ratio we determined earlier with the amount of 
+  //tenths of inches to go, then divide by ten as the ratio used is for an inch value.
+  //Since we don't want to calculate every iteration of the loop, we will find the clicks needed 
+  //before we begin the loop.
+  int tickGoal = (42 * tenthsOfIn) / 10;
+ 
+  //Use abs() to allow the < operator to apply when there are negative encoder values.
+  while(abs(SensorValue[leftEncoder]) < tickGoal) 
+  {
+    motor[leftServo] = power;  // We can now set the power from the function's second parameter.
+    motor[rightServo] = power; 
+  }
+  motor[leftServo] = 0; // Stop the loop once the encoders have counted up the correct number of encoder ticks.
+  motor[rightServo] = 0;  
+}
+ 
+task main()
+{
+  //Distances specified in tenths of an inch.
+ 
+  driveDistance(62,50); 
+  wait1Msec(500);              //Stop in between each command to prevent momentum causing wheel skid.
+  driveDistance(54,-50);
+  wait1Msec(500);
+  driveDistance(87,50);
+  wait1Msec(500);
+  driveDistance(95,-50);
+}
+Navigation menu
+Log inPageDiscussionReadView sourceView history
+
+Search
+Search
+Main page
+ARDUINO
+CORTEX
+NXT
+PIC
+TETRIX
+Tutorials
+General Programming
+Recent changes
+Help
+Tools
+This page was last modified on 26 July 2012, at 20:29.
+This page has been accessed 35,572 times.
+Privacy policyAbout ROBOTC API GuideDisclaimersPowered by MediaWiki
+Check your bundle
+Click Here
